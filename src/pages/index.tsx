@@ -1,8 +1,8 @@
 import { type NextPage } from "next";
+import BestSellers from "../components/Home/BestSellers";
 import Categories from "../components/Home/Categories";
 import DayProduct from "../components/Home/DayProduct";
 import Header from "../components/Home/Header";
-import BestSellers from "../components/Home/BestSellers";
 
 const Home: NextPage = () => {
   return (
