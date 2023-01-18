@@ -1,4 +1,5 @@
 import { type GetServerSidePropsContext } from "next";
+// eslint-disable-next-line camelcase
 import { unstable_getServerSession } from "next-auth";
 
 import { authOptions } from "../pages/api/auth/[...nextauth]";
