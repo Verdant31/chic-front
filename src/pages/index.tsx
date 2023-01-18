@@ -2,6 +2,7 @@ import { type NextPage } from "next";
 import Categories from "../components/Home/Categories";
 import DayProduct from "../components/Home/DayProduct";
 import Header from "../components/Home/Header";
+import BestSellers from "../components/Home/BestSellers";
 
 const Home: NextPage = () => {
   return (
@@ -9,6 +10,7 @@ const Home: NextPage = () => {
       <Header />
       <DayProduct />
       <Categories />
+      <BestSellers />
     </div>
   );
 };

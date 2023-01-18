@@ -6,7 +6,7 @@ const DayProduct: FC<DayProductProps> = () => {
   return (
     <div className="flex flex-col items-center py-4">
       <p className="mb-4 font-cormorant text-2xl font-bold uppercase text-zinc-700">
-        LANÇAMENTO EM ALTA
+        ACESSÓRIO EM ALTA
       </p>
       <img src="women.png" className="h-56 w-56" alt="nextjs" />
       <div className="mt-4 flex flex-col items-center">
