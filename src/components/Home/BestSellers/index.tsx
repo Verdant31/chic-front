@@ -11,7 +11,7 @@ interface BestSellersProps {}
 
 const BestSellers: FC<BestSellersProps> = () => {
   return (
-    <div className="mb-44 mt-12 flex flex-col items-center">
+    <div className="mt-12 flex flex-col items-center">
       <p className="mt-8 font-ptserif text-2xl font-medium uppercase tracking-widest text-black">
         Mais vendidos
       </p>
