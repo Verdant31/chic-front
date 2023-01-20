@@ -17,8 +17,8 @@ const Header: FC<HeaderProps> = () => {
       <HamburguerButton onClick={toggleDrawer(true)} />
       <h1 className="m-auto  font-cormorant text-[50px] font-semibold">CHIC</h1>
       <div className="relative">
-        <Handbag size={42} />
-        <p className=" absolute top-6 left-[24px] h-[26px] w-[26px] rounded-[9999px] bg-black  text-center text-lg text-white">
+        <Handbag size={32} />
+        <p className="absolute top-4 left-[20px] flex h-[20px] w-[20px] items-center justify-center rounded-[9999px] bg-black text-[12px] text-white">
           1
         </p>
       </div>
