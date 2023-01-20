@@ -56,7 +56,7 @@ const Categories: FC<CategoriesProps> = () => {
         >
           <img
             src="ring.png"
-            className="h-20 w-20 scale-[1.75] object-cover"
+            className="w-18 h-20 scale-[0.80] object-cover"
             alt="rings"
           />
           <p className="mt-6 border-b-[2px] border-[#dfbd69] pb-[5px] font-cormorant text-2xl text-black">
