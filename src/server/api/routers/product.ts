@@ -16,7 +16,19 @@ export const productRouter = createTRPCRouter({
       });
       return products;
     }),
-  createProduct: publicProcedure
+  getProduct: publicProcedure
+    .input(z.object({ productId: z.string() }))
+    .query(async ({ input }) => {
+      const product = await prisma.product.findFirst({
+        where: {
+          id: {
+            equals: input.productId,
+          },
+        },
+      });
+      return product;
+    }),
+  /*   createProduct: publicProcedure
     .input(
       z.object({
         name: z.string(),
@@ -39,5 +51,5 @@ export const productRouter = createTRPCRouter({
         .catch((err) => {
           console.log(err);
         });
-    }),
+    }), */
 });

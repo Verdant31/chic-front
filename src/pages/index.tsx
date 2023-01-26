@@ -3,7 +3,6 @@ import { useSession, signIn } from "next-auth/react";
 
 const Login: NextPage = () => {
   const { data: session } = useSession();
-  console.log(session);
   return (
     <div className="flex flex-col items-center">
       <h1 className="m-auto  mt-4 font-cormorant text-[50px] font-semibold">

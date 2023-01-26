@@ -3,12 +3,12 @@ import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import Link from "next/link";
 import { CaretDown } from "phosphor-react";
 
-interface DrawerItemProps {
+interface SidebarItemProps {
   title: string;
   items: string[];
 }
 
-const DrawerItem: FC<DrawerItemProps> = ({ items, title }) => {
+const SidebarItem: FC<SidebarItemProps> = ({ items, title }) => {
   return (
     <Accordion
       className="border-none shadow-none before:content-none"
@@ -36,4 +36,4 @@ const DrawerItem: FC<DrawerItemProps> = ({ items, title }) => {
   );
 };
 
-export default DrawerItem;
+export default SidebarItem;
