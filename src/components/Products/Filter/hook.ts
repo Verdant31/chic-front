@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
-export default function useHeader() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+export default function useFilter() {
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const toggleDrawer =
     (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
       if (
@@ -11,7 +11,7 @@ export default function useHeader() {
       ) {
         return;
       }
-      setIsSidebarOpen(open);
+      setIsFilterOpen(open);
     };
-  return { isSidebarOpen, toggleDrawer };
+  return { isFilterOpen, toggleDrawer };
 }
