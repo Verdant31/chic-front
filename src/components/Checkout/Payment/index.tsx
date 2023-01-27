@@ -12,6 +12,7 @@ const PaymentForm: FC<PaymentFormProps> = ({ onSubmit, status }) => {
       paymentOption: "card",
     },
   });
+  if (status === "pending") return null;
   return (
     <div className="m-auto mt-2 w-[300px] ">
       <h1 className="mb-1 font-cormorant text-2xl font-bold text-black">

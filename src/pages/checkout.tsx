@@ -40,6 +40,7 @@ const Checkout: React.FC = () => {
 
   const handleDeliveryFormCheckout = (e: DeliveryFormDataProps) => {
     setDeliveryFormStatus("completed");
+    setPaymentFormStatus("current");
     document.body.scrollTop = document.documentElement.scrollTop = 0;
   };
 
@@ -60,7 +61,8 @@ const Checkout: React.FC = () => {
           },
           quantity: product.quantity,
         })),
-        success_url: "http://localhost:3000/success",
+        success_url:
+          "http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}",
         cancel_url: "http://localhost:3000/cancel",
       })
       .then((res) => {

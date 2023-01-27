@@ -1,5 +1,12 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
-import { Product } from "@prisma/client";
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import nookies from "nookies";
+import { Product } from "../types/product";
 
 interface CartContextProviderProps {
   children: ReactNode;
@@ -23,6 +30,13 @@ const CartContext = createContext({} as CartContextProps);
 export const CartContextProvider = ({ children }: CartContextProviderProps) => {
   const [products, setProducts] = useState<CartProduct[]>([]);
 
+  useEffect(() => {
+    const products = nookies.get().products;
+    if (products) {
+      setProducts(JSON.parse(products));
+    }
+  }, []);
+
   const toggleQuantity = (
     productId: string,
     toggleType: "increase" | "decrease"
@@ -40,6 +54,7 @@ export const CartContextProvider = ({ children }: CartContextProviderProps) => {
       return product;
     });
     setProducts(updatedProducts);
+    nookies.set({}, "products", JSON.stringify(updatedProducts));
   };
 
   const removeProductFromCart = (productId: string) => {
@@ -47,6 +62,7 @@ export const CartContextProvider = ({ children }: CartContextProviderProps) => {
       return product.id !== productId;
     });
     setProducts(updatedProducts);
+    nookies.set({}, "products", JSON.stringify(updatedProducts));
   };
 
   const addProductToCart = (product: CartProduct) => {
@@ -55,10 +71,12 @@ export const CartContextProvider = ({ children }: CartContextProviderProps) => {
     );
     if (productIndex === -1) {
       setProducts([...products, product]);
+      nookies.set({}, "products", JSON.stringify([...products, product]));
     } else {
       setProducts((prev) => {
         const newProducts = [...prev];
         (products[productIndex] as CartProduct).quantity += product.quantity;
+        nookies.set({}, "products", JSON.stringify(newProducts));
         return newProducts;
       });
     }

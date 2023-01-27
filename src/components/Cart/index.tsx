@@ -2,6 +2,7 @@ import { Drawer } from "@mui/material";
 import React, { FC } from "react";
 import { Minus, Plus, Trash } from "phosphor-react";
 import { useCartComponent } from "./hook";
+import { useRouter } from "next/router";
 
 interface CartProps {
   isCartOpen: boolean;
@@ -11,6 +12,7 @@ interface CartProps {
 }
 
 const Cart: FC<CartProps> = ({ isCartOpen, toggleCart }) => {
+  const router = useRouter();
   const {
     handleProductDecrease,
     handleProductIncrease,
@@ -41,7 +43,7 @@ const Cart: FC<CartProps> = ({ isCartOpen, toggleCart }) => {
                   weight="bold"
                 />
               </div>
-              <p className="mb-2">R${product.price.toFixed(2)}</p>
+              <p className="mb-2">R${product.price}</p>
               <div className="relative w-24">
                 <Minus
                   weight="bold"
@@ -73,7 +75,10 @@ const Cart: FC<CartProps> = ({ isCartOpen, toggleCart }) => {
               <span className="font-normal">R${subtotal.toFixed(2)}</span>
             </span>
           )}
-          <button className="w-[80%] bg-zinc-800 py-4">
+          <button
+            onClick={() => router.push("/checkout")}
+            className="w-[80%] bg-zinc-800 py-4"
+          >
             <p className="text-sm font-semibold uppercase tracking-widest text-white">
               {products.length > 0 ? "Finalizar compra" : "Continuar comprando"}
             </p>
