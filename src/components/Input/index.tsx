@@ -1,21 +1,29 @@
 import React, { FC, InputHTMLAttributes } from "react";
-import { useFormContext, UseFormRegister } from "react-hook-form";
+import { FieldErrorsImpl, UseFormRegister } from "react-hook-form";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
   register: UseFormRegister<any>;
+  errors: Partial<
+    FieldErrorsImpl<{
+      [x: string]: any;
+    }>
+  >;
+  required?: boolean;
 }
 
-const Input: FC<InputProps> = ({ register, label, ...props }) => {
-  const {
-    formState: { errors },
-  } = useFormContext();
-
+const Input: FC<InputProps> = ({
+  register,
+  required = true,
+  errors,
+  label,
+  ...props
+}) => {
   return (
     <div>
       <label className="mt-4 flex items-center gap-2" htmlFor={props.name}>
         {label}
-        <p className="text-[#b99d58]">*</p>
+        {required && <span className="text-red-500">*</span>}
       </label>
       <input
         {...register(props.name as string)}
