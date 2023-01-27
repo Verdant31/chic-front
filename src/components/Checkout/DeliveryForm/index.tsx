@@ -25,7 +25,6 @@ const DeliveryForm: FC<DeliveryFormProps> = ({
 
   useEffect(() => {
     if (address) {
-      console.log(address);
       setValue("street", address.street);
       setValue("district", address.district);
       setValue("city", address.city);
