@@ -1,13 +1,11 @@
 import { type NextPage } from "next";
 import { signIn } from "next-auth/react";
-import { getBaseUrl } from "../utils/api";
 
 const Login: NextPage = () => {
   /*   const { data: session } = useSession(); */
   const handleSignIn = () => {
-    console.log(getBaseUrl());
     signIn("google", {
-      callbackUrl: `${getBaseUrl()}/home`,
+      callbackUrl: "/home",
     });
   };
   return (
