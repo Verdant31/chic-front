@@ -53,7 +53,7 @@ const Checkout: React.FC = () => {
         line_items: products.map((product) => ({
           price_data: {
             currency: "brl",
-            unit_amount: product.price * 100,
+            unit_amount: Number(product.price) * 100,
             product_data: {
               name: product.name,
               images: product.images,
