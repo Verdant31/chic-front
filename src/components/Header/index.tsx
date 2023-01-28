@@ -18,12 +18,14 @@ const Header: FC<HeaderProps> = () => {
       <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <Cart isCartOpen={isCartOpen} toggleCart={toggleCart} />
       <HamburguerButton onClick={toggleSidebar(true)} />
-      <h1
-        onClick={() => router.push("/home")}
-        className="m-auto  font-cormorant text-[50px] font-semibold"
-      >
-        CHIC
-      </h1>
+
+      <div className="m-auto text-center" onClick={() => router.push("/home")}>
+        <h1 className="font-cormorant text-[50px] font-semibold">CHIC</h1>
+        <h1 className="-mt-4 font-cormorant text-[20px] font-semibold tracking-widest">
+          ACESSÓRIOS
+        </h1>
+      </div>
+
       <div className="relative">
         <Handbag onClick={toggleCart(true)} size={32} />
         {products.length > 0 && (

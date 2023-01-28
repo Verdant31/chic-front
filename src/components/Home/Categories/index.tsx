@@ -10,7 +10,7 @@ const Categories: FC<CategoriesProps> = () => {
       <p className="mt-8 font-ptserif text-2xl font-medium uppercase tracking-widest text-black">
         DESCUBRA-SE
       </p>
-      <div className="mt-12 grid grid-cols-2 grid-rows-2 gap-12">
+      <div className="mt-12 grid grid-cols-2 grid-rows-2 gap-12 sm:grid-cols-3 sm:gap-24">
         <div
           onClick={() => handleRedirect("Colar")}
           className="flex cursor-pointer flex-col items-center"
@@ -61,6 +61,32 @@ const Categories: FC<CategoriesProps> = () => {
           />
           <p className="mt-6 border-b-[2px] border-[#dfbd69] pb-[5px] font-cormorant text-2xl text-black">
             Anéis
+          </p>
+        </div>
+        <div
+          onClick={() => handleRedirect("Anel")}
+          className="flex cursor-pointer flex-col items-center"
+        >
+          <img
+            src="ring.png"
+            className="w-18 h-20 scale-[0.80] object-cover"
+            alt="rings"
+          />
+          <p className="mt-6 border-b-[2px] border-[#dfbd69] pb-[5px] font-cormorant text-2xl text-black">
+            Bolsas
+          </p>
+        </div>
+        <div
+          onClick={() => handleRedirect("Anel")}
+          className="flex cursor-pointer flex-col items-center"
+        >
+          <img
+            src="ring.png"
+            className="w-18 h-20 scale-[0.80] object-cover"
+            alt="rings"
+          />
+          <p className="mt-6 border-b-[2px] border-[#dfbd69] pb-[5px] font-cormorant text-2xl text-black">
+            Chapéus
           </p>
         </div>
       </div>

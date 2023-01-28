@@ -27,6 +27,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
   const { status, data: session } = useSession();
 
   useEffect(() => {
+    console.log();
     if (status === "authenticated") {
       setUser(session as User);
     }
