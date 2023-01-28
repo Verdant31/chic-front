@@ -4,7 +4,7 @@ export function useCartComponent() {
   const { products, toggleQuantity, removeProductFromCart } = useCart();
 
   const subtotal = products.reduce((acc, product) => {
-    return acc + product.price * product.quantity;
+    return acc + Number(product.price) * product.quantity;
   }, 0);
 
   const handleProductDecrease = (product: CartProduct) => {
@@ -16,7 +16,7 @@ export function useCartComponent() {
   };
 
   const handleProductIncrease = (product: CartProduct) => {
-    if (product.quantity > product.stock) {
+    if (product.quantity > Number(product.stock)) {
       return;
     }
     toggleQuantity(product.id, "increase");
