@@ -1,5 +1,12 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
-import { Product } from "@prisma/client";
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import nookies from "nookies";
+import { Product } from "../types/product";
 
 interface CartContextProviderProps {
   children: ReactNode;
@@ -12,6 +19,7 @@ interface CartContextProps {
   products: CartProduct[];
   addProductToCart: (product: CartProduct) => void;
   removeProductFromCart: (productId: string) => void;
+  clearCart: () => void;
   toggleQuantity: (
     productId: string,
     toggleType: "increase" | "decrease"
@@ -22,6 +30,18 @@ const CartContext = createContext({} as CartContextProps);
 
 export const CartContextProvider = ({ children }: CartContextProviderProps) => {
   const [products, setProducts] = useState<CartProduct[]>([]);
+
+  useEffect(() => {
+    const products = nookies.get().products;
+    if (products) {
+      setProducts(JSON.parse(products));
+    }
+  }, []);
+
+  const clearCart = () => {
+    setProducts([]);
+    nookies.destroy({}, "products");
+  };
 
   const toggleQuantity = (
     productId: string,
@@ -40,6 +60,7 @@ export const CartContextProvider = ({ children }: CartContextProviderProps) => {
       return product;
     });
     setProducts(updatedProducts);
+    nookies.set({}, "products", JSON.stringify(updatedProducts));
   };
 
   const removeProductFromCart = (productId: string) => {
@@ -47,6 +68,7 @@ export const CartContextProvider = ({ children }: CartContextProviderProps) => {
       return product.id !== productId;
     });
     setProducts(updatedProducts);
+    nookies.set({}, "products", JSON.stringify(updatedProducts));
   };
 
   const addProductToCart = (product: CartProduct) => {
@@ -55,10 +77,12 @@ export const CartContextProvider = ({ children }: CartContextProviderProps) => {
     );
     if (productIndex === -1) {
       setProducts([...products, product]);
+      nookies.set({}, "products", JSON.stringify([...products, product]));
     } else {
       setProducts((prev) => {
         const newProducts = [...prev];
         (products[productIndex] as CartProduct).quantity += product.quantity;
+        nookies.set({}, "products", JSON.stringify(newProducts));
         return newProducts;
       });
     }
@@ -67,6 +91,7 @@ export const CartContextProvider = ({ children }: CartContextProviderProps) => {
   return (
     <CartContext.Provider
       value={{
+        clearCart,
         products,
         addProductToCart,
         toggleQuantity,

@@ -1,6 +1,6 @@
-import { Product } from "@prisma/client";
 import { useRouter } from "next/router";
 import React, { FC } from "react";
+import { Product } from "../../../types/product";
 
 interface ProductCardProps {
   product: Product;
@@ -21,9 +21,7 @@ const ProductCard: FC<ProductCardProps> = ({ product }: ProductCardProps) => {
         alt="Foto de um produto"
       />
       <p className="font-semibopld text-md mt-2 font-ptserif">{product.name}</p>
-      <p className="font-semibopld  font-ptserif text-lg">
-        R${product.price.toFixed(2)}
-      </p>
+      <p className="font-semibopld  font-ptserif text-lg">R${product.price}</p>
       <p className="font-ptserif  text-sm">Ou 3x de R$40.99</p>
     </div>
   );

@@ -1,5 +1,3 @@
-import { useRouter } from "next/router";
-import { api } from "../../utils/api";
 import React, { FC, useState } from "react";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -8,18 +6,18 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper";
 import { Minus, Plus } from "phosphor-react";
 import { useCart } from "../../context/CartContext";
+import { GetServerSideProps } from "next";
+import { stripeClient } from "../../utils/stripe";
+import { Product as TProduct } from "../../types/product";
 
-interface ProductProps {}
+interface ProductProps {
+  product: TProduct;
+}
 
-const Product: FC<ProductProps> = () => {
+const Product: FC<ProductProps> = ({ product }) => {
   const [quantity, setQuantity] = useState(1);
 
-  const { query } = useRouter();
   const { addProductToCart } = useCart();
-
-  const { data: product } = api.product.getProduct.useQuery({
-    productId: query.productId as string,
-  });
 
   const handleAddProduct = () => {
     if (product) {
@@ -49,7 +47,7 @@ const Product: FC<ProductProps> = () => {
 
         <div className="mt-4 flex items-center gap-8">
           <p className="pt-2 font-ptserif text-2xl font-bold">
-            R${product?.price.toFixed(2)}
+            R${product?.price}
           </p>
           <div className="relative w-36">
             <Minus
@@ -63,6 +61,7 @@ const Product: FC<ProductProps> = () => {
             <input
               min={1}
               value={quantity}
+              readOnly
               disabled
               className="h-12  w-[100%] text-center font-sans font-semibold text-black "
             />
@@ -86,3 +85,28 @@ const Product: FC<ProductProps> = () => {
 };
 
 export default Product;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const productId = context.params?.productId as string;
+  const product = await stripeClient.products.retrieve(productId);
+  const price = await stripeClient.prices.retrieve(
+    product.default_price as string
+  );
+
+  const formattedProduct = {
+    id: product.id,
+    name: product.name,
+    description: product.description,
+    price:
+      price && price.unit_amount ? (price?.unit_amount / 100).toFixed(2) : 0,
+    images: JSON.parse(product.metadata.imagens as string),
+    category: product.metadata.categoria,
+    stock: product.metadata.estoque,
+  };
+
+  return {
+    props: {
+      product: formattedProduct,
+    },
+  };
+};
