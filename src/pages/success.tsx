@@ -1,8 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable camelcase */
 import { GetServerSideProps } from "next";
-import React from "react";
+import React, { useEffect } from "react";
 import { stripeClient } from "../utils/stripe";
 import { Stripe } from "stripe";
+import { useRouter } from "next/router";
+import { useCart } from "../context/CartContext";
 interface ExtendedLineItem extends Stripe.LineItem {
   productImages: string[];
 }
@@ -19,8 +22,13 @@ interface SuccessProps {
 }
 
 const Success: React.FC<SuccessProps> = ({ order }) => {
+  const router = useRouter();
+  const { clearCart } = useCart();
+  useEffect(() => {
+    clearCart();
+  }, []);
   return (
-    <div className="h-[100vh]">
+    <div className="flex flex-col items-center">
       <h1 className="m-auto mt-2 text-center font-cormorant text-[50px] font-semibold">
         CHIC
       </h1>
@@ -35,20 +43,38 @@ const Success: React.FC<SuccessProps> = ({ order }) => {
           Seu pedido já está sendo processado e será enviado em breve.
         </p>
         <p className="mt-4 font-ptserif">Resumo do pedido</p>
-        <p className="mt-2 font-thin">
+        <p className="font-thin">
           Total: R${((order.amount_total as number) / 100).toFixed(2)}
         </p>
-        <p className="mt-2 font-thin">Items:</p>
+        <p className="mt-2 mb-2 font-thin">Items:</p>
         {order.line_items.data.map((item) => (
-          <div key={item.id}>
+          <div key={item.id} className="flex">
             <img
               className="h-12 w-12"
               src={item.productImages[0]}
               alt="Imagem do produto"
             />
+            <div>
+              <p className="ml-2 text-[14px] font-thin">{item.description}</p>
+              <div className="flex items-center">
+                <p className="font-regular ml-2 text-[14px]">
+                  Preço: R${((item.amount_total as number) / 100).toFixed(2)}
+                </p>
+                <p className="ml-2 text-[14px] font-thin">
+                  ({item.quantity} x R$
+                  {((item.price?.unit_amount as number) / 100).toFixed(2)})`
+                </p>
+              </div>
+            </div>
           </div>
         ))}
       </div>
+      <button
+        onClick={() => router.push("/home")}
+        className="text-md m-auto mt-6 h-12 w-[90%] bg-zinc-700 uppercase tracking-wider text-white"
+      >
+        Continuar comprando
+      </button>
     </div>
   );
 };

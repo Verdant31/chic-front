@@ -9,8 +9,10 @@ export const deliveryFormValidationSchema = zod.object({
   street: zod.string().min(1, "O campo Endereço é obrigatório"),
   number: zod.string().min(1, "O campo Numero é obrigatório"),
   complement: zod.string().nullable(),
+  freightOption: zod.string().min(1, "O campo Frete é obrigatório"),
 });
 
 export interface DeliveryFormDataProps extends Address {
   cep: string;
+  freightOption: "04014" | "04510";
 }

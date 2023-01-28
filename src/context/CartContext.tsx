@@ -19,6 +19,7 @@ interface CartContextProps {
   products: CartProduct[];
   addProductToCart: (product: CartProduct) => void;
   removeProductFromCart: (productId: string) => void;
+  clearCart: () => void;
   toggleQuantity: (
     productId: string,
     toggleType: "increase" | "decrease"
@@ -36,6 +37,11 @@ export const CartContextProvider = ({ children }: CartContextProviderProps) => {
       setProducts(JSON.parse(products));
     }
   }, []);
+
+  const clearCart = () => {
+    setProducts([]);
+    nookies.destroy({}, "products");
+  };
 
   const toggleQuantity = (
     productId: string,
@@ -85,6 +91,7 @@ export const CartContextProvider = ({ children }: CartContextProviderProps) => {
   return (
     <CartContext.Provider
       value={{
+        clearCart,
         products,
         addProductToCart,
         toggleQuantity,

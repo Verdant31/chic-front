@@ -10,6 +10,8 @@ import PaymentForm from "../components/Checkout/Payment";
 import { PaymentFormDataProps } from "../components/Checkout/Payment/form";
 import { useCart } from "../context/CartContext";
 import { stripeClient } from "../utils/stripe";
+import axios from "axios";
+import { Freight } from "../types/freights";
 
 export type Step = "completed" | "current" | "pending" | "cepVerified";
 export type Address = {
@@ -38,7 +40,7 @@ const Checkout: React.FC = () => {
     document.body.scrollTop = document.documentElement.scrollTop = 0;
   };
 
-  const handleDeliveryFormCheckout = (e: DeliveryFormDataProps) => {
+  const handleDeliveryFormCheckout = async (e: DeliveryFormDataProps) => {
     setDeliveryFormStatus("completed");
     setPaymentFormStatus("current");
     document.body.scrollTop = document.documentElement.scrollTop = 0;
@@ -84,6 +86,12 @@ const Checkout: React.FC = () => {
         number: "",
         complement: "",
       });
+    const freights: Freight[] = await axios
+      .post("api/calculateDeliveryFee", {
+        cep,
+      })
+      .then((res) => res.data.freights);
+    return freights;
   };
 
   return (

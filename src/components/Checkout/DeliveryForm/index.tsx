@@ -1,11 +1,14 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import Input from "../../Input";
 import { motion } from "framer-motion";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Select from "../../Select";
 import { DeliveryFormDataProps, deliveryFormValidationSchema } from "./form";
 import { DeliveryFormProps } from "./types";
+import { Freight } from "../../../types/freights";
+import { FormControlLabel, Radio } from "@mui/material";
+import DeliveryFormFilled from "./components/DeliveryFormFilled";
 
 const DeliveryForm: FC<DeliveryFormProps> = ({
   status,
@@ -18,10 +21,17 @@ const DeliveryForm: FC<DeliveryFormProps> = ({
     formState: { errors },
     handleSubmit,
     getValues,
+    control,
     setValue,
   } = useForm<DeliveryFormDataProps>({
     resolver: zodResolver(deliveryFormValidationSchema),
   });
+  const [freightOptions, setFreightOptions] = useState<Freight[]>([]);
+
+  const verifyCepAndGetFreight = async (cep: string) => {
+    const freights = await handleVerifyCep(cep);
+    setFreightOptions(freights);
+  };
 
   useEffect(() => {
     if (address) {
@@ -40,30 +50,7 @@ const DeliveryForm: FC<DeliveryFormProps> = ({
         onSubmit={handleSubmit(onSubmit)}
         className="m-auto mt-2 w-[300px] pb-4"
       >
-        <h1 className="mb-1 font-cormorant text-2xl font-bold text-black">
-          Entrega
-        </h1>
-        <motion.div
-          className="border-[1px] border-t-[0px] border-r-[0px] border-l-[0px] border-b-[2px] border-gray-300 pb-4"
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{
-            duration: 0.8,
-            delay: 0.5,
-            ease: [0, 0.71, 0.2, 1.01],
-          }}
-        >
-          <p className="mt-4 text-[15px] font-thin text-gray-800">
-            {fields.street}, {fields.number}
-          </p>
-          <p className="text-[15px] font-thin text-gray-800">
-            {fields.district}
-          </p>
-          <p className="text-[15px] font-thin text-gray-800">
-            {fields.city} - {fields.uf}
-          </p>
-          <p className="text-[15px] font-thin text-gray-800">{fields.cep}</p>
-        </motion.div>
+        <DeliveryFormFilled fields={fields} />
       </form>
     );
   }
@@ -85,7 +72,9 @@ const DeliveryForm: FC<DeliveryFormProps> = ({
       <p className="font-thin">Insira seu CEP no campo abaixo:</p>
       <Input
         onKeyUp={(event) =>
-          event.key === "Enter" ? handleVerifyCep(getValues("cep")) : null
+          event.key === "Enter"
+            ? verifyCepAndGetFreight(getValues("cep"))
+            : null
         }
         errors={errors}
         register={register}
@@ -143,6 +132,31 @@ const DeliveryForm: FC<DeliveryFormProps> = ({
               label="Estado"
             />
           </div>
+          <Controller
+            name="freightOption"
+            control={control}
+            render={({ field }) => (
+              <div className="mt-4">
+                {freightOptions.length > 0 &&
+                  freightOptions.map((freight) => (
+                    <FormControlLabel
+                      key={freight.serviceCode}
+                      value={freight.serviceCode}
+                      control={
+                        <Radio
+                          onChange={field.onChange}
+                          checked={field.value === freight.serviceCode}
+                        />
+                      }
+                      label={`${freight.serviceName} (${freight.deadline} dias úteis) - R$ ${freight.price}`}
+                    />
+                  ))}
+              </div>
+            )}
+          />
+          {errors.freightOption && (
+            <p className="text-sm text-red-500">Selecione uma opção de frete</p>
+          )}
           <button className="font-sm mb-12 mt-10 h-12 w-full bg-zinc-700  uppercase tracking-wider text-white">
             <p className="text-sm font-bold">ir para o pagamento</p>
           </button>

@@ -22,7 +22,7 @@ const Cart: FC<CartProps> = ({ isCartOpen, toggleCart }) => {
   } = useCartComponent();
   return (
     <Drawer anchor="right" open={isCartOpen} onClose={toggleCart(false)}>
-      <div className="h-[100vh] w-[320px] bg-white p-6">
+      <div className="w-[320px] bg-white p-6">
         <p className="mb-8 text-center text-xl font-bold uppercase tracking-widest">
           Carrinho
         </p>
@@ -54,6 +54,7 @@ const Cart: FC<CartProps> = ({ isCartOpen, toggleCart }) => {
                 />
                 <input
                   min={1}
+                  readOnly
                   value={product.quantity}
                   className="h-7 w-[100%] overflow-hidden rounded-full border-[1px]  border-[#dfbd69] text-center font-sans text-black outline-none focus:border-[2px] "
                 />
