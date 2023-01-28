@@ -12,6 +12,7 @@ import { useCart } from "../context/CartContext";
 import { stripeClient } from "../utils/stripe";
 import axios from "axios";
 import { Freight } from "../types/freights";
+import { getBaseUrl } from "../utils/api";
 
 export type Step = "completed" | "current" | "pending" | "cepVerified";
 export type Address = {
@@ -77,9 +78,8 @@ const Checkout: React.FC = () => {
           },
           quantity: product.quantity,
         })),
-        success_url:
-          "http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}",
-        cancel_url: "http://localhost:3000/home",
+        success_url: `${getBaseUrl()}/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${getBaseUrl()}/home`,
       })
       .then((res) => {
         if (res && res.url) router.push(res.url);
