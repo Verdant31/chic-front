@@ -28,6 +28,7 @@ const Checkout: React.FC = () => {
   const [deliveryFormStatus, setDeliveryFormStatus] = useState<Step>("pending");
   const [paymentFormStatus, setPaymentFormStatus] = useState<Step>("pending");
   const [address, setAddress] = useState<Address | undefined>();
+  const [freightOptions, setFreightOptions] = useState<Freight[]>([]);
   const router = useRouter();
   const { products } = useCart();
   const { data: session, status } = useSession();
@@ -52,6 +53,19 @@ const Checkout: React.FC = () => {
       .create({
         payment_method_types: ["card"],
         mode: "payment",
+        shipping_options: freightOptions.map((freight) => ({
+          shipping_rate_data: {
+            type: "fixed_amount",
+            display_name: freight.serviceName,
+            fixed_amount: {
+              currency: "brl",
+              amount: Math.round(Number(freight.price.replace(",", ".")) * 100),
+            },
+            delivery_estimate: {
+              maximum: { unit: "day", value: Number(freight.deadline) },
+            },
+          },
+        })),
         line_items: products.map((product) => ({
           price_data: {
             currency: "brl",
@@ -65,7 +79,7 @@ const Checkout: React.FC = () => {
         })),
         success_url:
           "http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}",
-        cancel_url: "http://localhost:3000/cancel",
+        cancel_url: "http://localhost:3000/home",
       })
       .then((res) => {
         if (res && res.url) router.push(res.url);
@@ -86,12 +100,11 @@ const Checkout: React.FC = () => {
         number: "",
         complement: "",
       });
-    const freights: Freight[] = await axios
+    await axios
       .post("api/calculateDeliveryFee", {
         cep,
       })
-      .then((res) => res.data.freights);
-    return freights;
+      .then((res) => setFreightOptions(res.data.freights));
   };
 
   return (

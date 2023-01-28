@@ -1,13 +1,11 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect } from "react";
 import Input from "../../Input";
 import { motion } from "framer-motion";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Select from "../../Select";
 import { DeliveryFormDataProps, deliveryFormValidationSchema } from "./form";
 import { DeliveryFormProps } from "./types";
-import { Freight } from "../../../types/freights";
-import { FormControlLabel, Radio } from "@mui/material";
 import DeliveryFormFilled from "./components/DeliveryFormFilled";
 
 const DeliveryForm: FC<DeliveryFormProps> = ({
@@ -21,17 +19,10 @@ const DeliveryForm: FC<DeliveryFormProps> = ({
     formState: { errors },
     handleSubmit,
     getValues,
-    control,
     setValue,
   } = useForm<DeliveryFormDataProps>({
     resolver: zodResolver(deliveryFormValidationSchema),
   });
-  const [freightOptions, setFreightOptions] = useState<Freight[]>([]);
-
-  const verifyCepAndGetFreight = async (cep: string) => {
-    const freights = await handleVerifyCep(cep);
-    setFreightOptions(freights);
-  };
 
   useEffect(() => {
     if (address) {
@@ -54,7 +45,7 @@ const DeliveryForm: FC<DeliveryFormProps> = ({
       </form>
     );
   }
-
+  console.log(errors);
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.5 }}
@@ -72,9 +63,7 @@ const DeliveryForm: FC<DeliveryFormProps> = ({
       <p className="font-thin">Insira seu CEP no campo abaixo:</p>
       <Input
         onKeyUp={(event) =>
-          event.key === "Enter"
-            ? verifyCepAndGetFreight(getValues("cep"))
-            : null
+          event.key === "Enter" ? handleVerifyCep(getValues("cep")) : null
         }
         errors={errors}
         register={register}
@@ -132,31 +121,6 @@ const DeliveryForm: FC<DeliveryFormProps> = ({
               label="Estado"
             />
           </div>
-          <Controller
-            name="freightOption"
-            control={control}
-            render={({ field }) => (
-              <div className="mt-4">
-                {freightOptions.length > 0 &&
-                  freightOptions.map((freight) => (
-                    <FormControlLabel
-                      key={freight.serviceCode}
-                      value={freight.serviceCode}
-                      control={
-                        <Radio
-                          onChange={field.onChange}
-                          checked={field.value === freight.serviceCode}
-                        />
-                      }
-                      label={`${freight.serviceName} (${freight.deadline} dias úteis) - R$ ${freight.price}`}
-                    />
-                  ))}
-              </div>
-            )}
-          />
-          {errors.freightOption && (
-            <p className="text-sm text-red-500">Selecione uma opção de frete</p>
-          )}
           <button className="font-sm mb-12 mt-10 h-12 w-full bg-zinc-700  uppercase tracking-wider text-white">
             <p className="text-sm font-bold">ir para o pagamento</p>
           </button>
