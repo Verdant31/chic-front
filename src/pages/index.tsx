@@ -1,9 +1,9 @@
 import { type NextPage } from "next";
-import { useSession, signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 
 const Login: NextPage = () => {
-  const { data: session } = useSession();
-  return (
+  /*   const { data: session } = useSession();
+   */ return (
     <div className="flex flex-col items-center">
       <h1 className="m-auto  mt-4 font-cormorant text-[50px] font-semibold">
         CHIC
