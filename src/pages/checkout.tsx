@@ -49,6 +49,7 @@ const Checkout: React.FC = () => {
   };
 
   const handlePaymentFormCheckout = async (e: PaymentFormDataProps) => {
+    console.log(getBaseUrl());
     setPaymentFormStatus("completed");
     await stripeClient.checkout.sessions
       .create({
