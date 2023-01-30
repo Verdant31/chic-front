@@ -12,13 +12,13 @@ const DayProduct: FC<DayProductProps> = () => {
           alt="nextjs"
         />
         <div className="mt-8 flex flex-col items-center sm:mx-auto">
-          <p className="font-cormorant text-xl font-bold uppercase italic sm:text-base lg:text-2xl">
+          <p className="font-cormorant text-xl font-bold uppercase italic sm:text-base md:text-2xl">
             O nome da coleção aqui
           </p>
-          <p className="mt-2 w-[250px] text-center font-cormorant text-sm font-bold uppercase italic sm:text-center sm:text-[12px] lg:text-sm">
+          <p className="mt-2 w-[250px] text-center font-cormorant text-sm font-bold uppercase italic sm:text-center sm:text-[12px] md:text-sm">
             Uma descriçãozinha sobre a coleção
           </p>
-          <p className="mt-4 pb-8 text-xl font-thin underline lg:mt-12 lg:text-2xl">
+          <p className="mt-4 pb-8 text-xl font-thin underline md:mt-12 md:text-2xl">
             Conheça agora
           </p>
         </div>

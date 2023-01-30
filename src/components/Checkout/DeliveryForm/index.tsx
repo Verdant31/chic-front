@@ -45,7 +45,6 @@ const DeliveryForm: FC<DeliveryFormProps> = ({
       </form>
     );
   }
-  console.log(errors);
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.5 }}

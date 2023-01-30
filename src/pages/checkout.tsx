@@ -49,7 +49,6 @@ const Checkout: React.FC = () => {
   };
 
   const handlePaymentFormCheckout = async (e: PaymentFormDataProps) => {
-    console.log(getBaseUrl());
     setPaymentFormStatus("completed");
     await stripeClient.checkout.sessions
       .create({
@@ -136,7 +135,6 @@ export default Checkout;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
-  console.log(session);
   if (!session) {
     return {
       redirect: {

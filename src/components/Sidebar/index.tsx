@@ -25,6 +25,9 @@ const Sidebar: FC<SidebarProps> = ({ toggleSidebar, isSidebarOpen }) => {
                 Bem vindo {session.user?.name?.split(" ")[0]}.
               </p>
               <p className="text-sm">{session.user?.email}</p>
+              <a href="/account" className="text-sm underline">
+                Minha conta
+              </a>
             </div>
           </div>
         ) : (
