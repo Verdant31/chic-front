@@ -18,7 +18,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
   const hasHader =
     router.pathname === "/" ||
     router.pathname === "/checkout" ||
-    router.pathname === "/success";
+    router.pathname === "/success" ||
+    router.pathname === "/account";
   return (
     <SessionProvider session={session}>
       <AuthContextProvider>

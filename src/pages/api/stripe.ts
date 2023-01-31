@@ -5,7 +5,8 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    console.log(req);
+    if ((req.body.type as string).includes("payment_intent")) {
+    }
   } catch (err) {
     res.status(500).json({ message: err });
   }

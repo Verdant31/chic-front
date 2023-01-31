@@ -25,7 +25,7 @@ const Success: React.FC<SuccessProps> = ({ order }) => {
   const router = useRouter();
   const { clearCart } = useCart();
   useEffect(() => {
-    clearCart();
+    /* clearCart(); */
   }, []);
   return (
     <div className="flex flex-col items-center">
@@ -87,6 +87,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     sessionId as string,
     { expand: ["line_items", "payment_intent"] }
   );
+
   const products = await Promise.all(
     (session.line_items as Stripe.ApiList<Stripe.LineItem>).data.map(
       async (lineItem) => {
