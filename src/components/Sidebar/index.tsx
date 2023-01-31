@@ -38,16 +38,12 @@ const Sidebar: FC<SidebarProps> = ({ toggleSidebar, isSidebarOpen }) => {
         )}
         <div className="mt-4 flex flex-col gap-2">
           <SidebarItem
-            title="Joias"
-            items={["Anéis", "Colares", "Brincos", "Pulseiras"]}
-          />
-          <SidebarItem
             title="Semijoias"
             items={["Anéis", "Colares", "Brincos", "Pulseiras"]}
           />
           <SidebarItem
             title="Acessórios"
-            items={["Anéis", "Colares", "Brincos", "Pulseiras"]}
+            items={["Presilhas", "Hair Clips", "Chapéus", "Bolsas", "Scrunchs"]}
           />
         </div>
       </div>

@@ -1,17 +1,18 @@
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import { GetServerSideProps } from "next";
-import { Session } from "next-auth";
 import { getSession, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { CaretDown, UserCircle } from "phosphor-react";
 import React from "react";
+import Stripe from "stripe";
 import { stripeClient } from "../utils/stripe";
+import { format } from "date-fns";
 
 interface AccountProps {
-  session: Session;
+  orders: Stripe.Response<Stripe.ApiList<Stripe.Checkout.Session>>;
 }
 
-const Account: React.FC<AccountProps> = () => {
+const Account: React.FC<AccountProps> = ({ orders }) => {
   const router = useRouter();
   const { data: session } = useSession();
   return (
@@ -43,30 +44,32 @@ const Account: React.FC<AccountProps> = () => {
             >
               <h1 className="font-ptserif text-xl">Dados pessoais</h1>
             </AccordionSummary>
-            <AccordionDetails className="flex flex-col  p-0">
-              <div className="p-2">
-                <p className="text-lg  text-zinc-700">Nome</p>
-                <p className="text-lg font-thin  text-zinc-700">
-                  {session?.user?.name}
-                </p>
-              </div>
-              <div className="p-2">
-                <p className="text-lg  text-zinc-700">Email</p>
-                <p className="text-lg font-thin  text-zinc-700">
-                  {session?.user?.email}
-                </p>
-              </div>
-              <div className="p-2">
-                <p className="text-lg  text-zinc-700">CPF</p>
-                <p className="text-lg font-thin  text-zinc-700"></p>
-              </div>
-              <div className="p-2">
-                <p className="text-lg  text-zinc-700">Data de nascimento</p>
-                <p className="text-lg font-thin  text-zinc-700"></p>
-              </div>
-              <div className="p-2">
-                <p className="text-lg  text-zinc-700">Telefone</p>
-                <p className="text-lg font-thin  text-zinc-700"></p>
+            <AccordionDetails className="flex flex-col bg-[#eff2f5] p-0 pt-4">
+              <div className="flex flex-col bg-white p-4 text-sm">
+                <div className="p-2">
+                  <p className="text-md  text-zinc-700">Nome</p>
+                  <p className="text-md font-thin  text-zinc-700">
+                    {session?.user?.name}
+                  </p>
+                </div>
+                <div className="p-2">
+                  <p className="text-md  text-zinc-700">Email</p>
+                  <p className="text-md font-thin  text-zinc-700">
+                    {session?.user?.email}
+                  </p>
+                </div>
+                <div className="p-2">
+                  <p className="text-md  text-zinc-700">CPF</p>
+                  <p className="text-md font-thin  text-zinc-700"></p>
+                </div>
+                <div className="p-2">
+                  <p className="text-md  text-zinc-700">Data de nascimento</p>
+                  <p className="text-md font-thin  text-zinc-700"></p>
+                </div>
+                <div className="p-2">
+                  <p className="text-md  text-zinc-700">Telefone</p>
+                  <p className="text-md font-thin  text-zinc-700"></p>
+                </div>
               </div>
             </AccordionDetails>
           </Accordion>
@@ -82,7 +85,47 @@ const Account: React.FC<AccountProps> = () => {
             >
               <h1 className="font-ptserif text-xl">Meus pedidos</h1>
             </AccordionSummary>
-            <AccordionDetails className="flex flex-col  p-0"></AccordionDetails>
+            <AccordionDetails className="flex flex-col bg-[#eff2f5] p-0 pt-4">
+              <div className="flex flex-col gap-4">
+                {orders?.data?.map((order) => (
+                  <div
+                    className="flex flex-col bg-white p-4 text-sm"
+                    key={order.id}
+                  >
+                    <span>
+                      Status do pedido:
+                      <span className="ml-1 font-thin">
+                        {order.payment_status === "paid"
+                          ? "Pagamento aprovado"
+                          : "Pagamento não aprovado"}
+                      </span>
+                    </span>
+                    <span>
+                      Data do pedido:
+                      <span className="ml-1 font-thin">
+                        {formatDate(order.created)}
+                      </span>
+                    </span>
+                    <span>
+                      Total:
+                      <span className="ml-1 font-thin">
+                        R${(Number(order.amount_total) / 100).toFixed(2)}
+                      </span>
+                    </span>
+                    <span className="text-md mt-2 font-thin">
+                      {order.line_items?.data?.map((item) => (
+                        <div key={item.id}>
+                          <span>
+                            {item.quantity}x {item.description} - R$
+                            {(Number(item.amount_total) / 100).toFixed(2)}
+                          </span>
+                        </div>
+                      ))}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </AccordionDetails>
           </Accordion>
         </div>
       </div>
@@ -106,12 +149,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     email: session.user?.email as string,
     limit: 1,
   });
-  console.log(customers);
-  const orders = await stripeClient.charges.list({
+  const orders = await stripeClient.checkout.sessions.list({
     customer: customers?.data[0]?.id,
+    limit: 3,
+    expand: ["data.line_items"],
   });
-  console.log(orders);
+
   return {
-    props: {},
+    props: {
+      orders,
+    },
   };
+};
+
+const formatDate = (timestamp: number) => {
+  return format(new Date(timestamp * 1000), "dd/MM/yyyy HH:mm");
 };

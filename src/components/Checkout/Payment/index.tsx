@@ -47,7 +47,7 @@ const PaymentForm: FC<PaymentFormProps> = ({ onSubmit, status }) => {
         }}
       />
       <button
-        onClick={() => onSubmit(getValues())}
+        onClick={() => onSubmit()}
         className="font-sm mt-10 h-12 w-full bg-zinc-700  uppercase tracking-wider text-white"
       >
         <p className="text-sm font-bold">ir para o pagamento</p>

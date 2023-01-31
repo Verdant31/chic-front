@@ -93,6 +93,7 @@ const MainForm: FC<MainFormProps> = ({ onSubmit, session, status }) => {
           register={register}
           name="cpf"
           id="cpf"
+          type="number"
           label="CPF"
         />
         <Input
