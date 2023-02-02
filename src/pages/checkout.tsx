@@ -27,8 +27,8 @@ export type Address = {
 };
 
 const Checkout: React.FC = () => {
-  const [mainFormStatus, setMainFormStatus] = useState<Step>("completed");
-  const [deliveryFormStatus, setDeliveryFormStatus] = useState<Step>("current");
+  const [mainFormStatus, setMainFormStatus] = useState<Step>("current");
+  const [deliveryFormStatus, setDeliveryFormStatus] = useState<Step>("pending");
   const [paymentFormStatus, setPaymentFormStatus] = useState<Step>("pending");
   const [freightOptions, setFreightOptions] = useState<Freight[]>([]);
 

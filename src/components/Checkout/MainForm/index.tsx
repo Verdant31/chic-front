@@ -68,6 +68,7 @@ const MainForm: FC<MainFormProps> = ({ onSubmit, session, status }) => {
       </span>
       <div className="mt-4">
         <Input
+          placeholder="Ex: João Pedro"
           errors={errors}
           register={register}
           name="firstName"
@@ -75,6 +76,7 @@ const MainForm: FC<MainFormProps> = ({ onSubmit, session, status }) => {
           label="Primeiro nome"
         />
         <Input
+          placeholder="Ex: Silva"
           errors={errors}
           register={register}
           name="lastName"
@@ -82,6 +84,7 @@ const MainForm: FC<MainFormProps> = ({ onSubmit, session, status }) => {
           label="Ultimo nome"
         />
         <Input
+          placeholder="123456789"
           errors={errors}
           register={register}
           name="rg"
@@ -89,19 +92,22 @@ const MainForm: FC<MainFormProps> = ({ onSubmit, session, status }) => {
           label="RG"
         />
         <Input
+          placeholder="123.456.789-01"
           errors={errors}
           register={register}
           name="cpf"
           id="cpf"
-          type="number"
           label="CPF"
+          maxLength={14}
         />
         <Input
+          placeholder="(12) 12345-6789"
           errors={errors}
           register={register}
           name="cellphone"
           id="cellphone"
           label="Telefone"
+          maxLength={15}
         />
       </div>
       <button className="font-sm mt-10 h-12 w-full bg-zinc-700  uppercase tracking-wider text-white">
