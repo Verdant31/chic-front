@@ -1,7 +1,7 @@
 import React, { FC, useEffect } from "react";
 import Input from "../../Input";
 import { motion } from "framer-motion";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Select from "../../Select";
 import { DeliveryFormDataProps, deliveryFormValidationSchema } from "./form";
@@ -20,6 +20,7 @@ const DeliveryForm: FC<DeliveryFormProps> = ({
     handleSubmit,
     getValues,
     setValue,
+    control,
   } = useForm<DeliveryFormDataProps>({
     resolver: zodResolver(deliveryFormValidationSchema),
   });
@@ -111,16 +112,24 @@ const DeliveryForm: FC<DeliveryFormProps> = ({
               id="city"
               label="Cidade"
             />
-            <Select
-              options={states}
-              errors={errors}
-              register={register}
+            <Controller
               name="uf"
-              id="uf"
-              label="Estado"
+              control={control}
+              render={({ field }) => {
+                return (
+                  <Select
+                    onValueChange={(value: string) => field.onChange(value)}
+                    value={field.value}
+                    name="uf"
+                    label="Estado"
+                    options={states}
+                  />
+                );
+              }}
             />
           </div>
-          <button className="font-sm mb-12 mt-10 h-12 w-full bg-zinc-700  uppercase tracking-wider text-white">
+
+          <button className="font-sm mb-12 mt-10 h-12 w-[300px] bg-zinc-700  uppercase tracking-wider text-white">
             <p className="text-sm font-bold">ir para o pagamento</p>
           </button>
         </form>
