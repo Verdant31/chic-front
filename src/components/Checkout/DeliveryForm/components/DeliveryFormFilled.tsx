@@ -8,9 +8,6 @@ interface DeliveryFormFilledProps {
 const DeliveryFormFilled: FC<DeliveryFormFilledProps> = ({ fields }) => {
   return (
     <>
-      <h1 className="mb-1 font-cormorant text-2xl font-bold text-black">
-        Entrega
-      </h1>
       <motion.div
         className="border-[1px] border-t-[0px] border-r-[0px] border-l-[0px] border-b-[2px] border-gray-300 pb-4"
         initial={{ opacity: 0, scale: 0.5 }}

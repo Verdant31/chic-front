@@ -6,4 +6,5 @@ export interface MainFormProps {
   onSubmit: (e: MainFormDataProps) => void;
   session: Session | null;
   status: Step;
+  changeStatus: (status: Step) => void;
 }

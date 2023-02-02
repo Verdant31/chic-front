@@ -49,7 +49,7 @@ const Input: FC<InputProps> = ({
         <input
           {...registerProps}
           {...props}
-          className="mt-2 h-10 w-full rounded-none border-[1px] border-gray-500 pl-4"
+          className="mt-2 h-10 w-full rounded-none border-[1px] border-gray-500 px-4"
         />
       )}
 

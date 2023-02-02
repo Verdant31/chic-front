@@ -6,4 +6,5 @@ export interface DeliveryFormProps {
   onSubmit: (e: DeliveryFormDataProps) => void;
   status: Step;
   address: Address | undefined;
+  changeStatus: (status: Step) => void;
 }

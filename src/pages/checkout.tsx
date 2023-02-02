@@ -42,6 +42,16 @@ const Checkout: React.FC = () => {
 
   if (status === "loading") return <p>Carregando...</p>;
 
+  const handleChangeMainFormStatus = (newStatus: Step) => {
+    setMainFormStatus(newStatus);
+    document.body.scrollTop = document.documentElement.scrollTop = 0;
+  };
+
+  const handleChangeDeliveryFormStatus = (newStatus: Step) => {
+    setDeliveryFormStatus(newStatus);
+    document.body.scrollTop = document.documentElement.scrollTop = 0;
+  };
+
   const handleMainFormCheckout = (e: MainFormDataProps) => {
     setMainInfo(e);
     setMainFormStatus("completed");
@@ -136,12 +146,14 @@ const Checkout: React.FC = () => {
         status={mainFormStatus}
         onSubmit={handleMainFormCheckout}
         session={session}
+        changeStatus={handleChangeMainFormStatus}
       />
       <DeliveryForm
         onSubmit={handleDeliveryFormCheckout}
         address={address}
         status={deliveryFormStatus}
         handleVerifyCep={handleVerifyCep}
+        changeStatus={handleChangeDeliveryFormStatus}
       />
       <PaymentForm
         onSubmit={handlePaymentFormCheckout}

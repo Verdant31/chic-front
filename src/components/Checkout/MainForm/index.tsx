@@ -5,8 +5,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MainFormProps } from "./types";
 import { MainFormDataProps, mainFormValidationSchema } from "./form";
+import { Pencil } from "phosphor-react";
 
-const MainForm: FC<MainFormProps> = ({ onSubmit, session, status }) => {
+const MainForm: FC<MainFormProps> = ({
+  onSubmit,
+  session,
+  status,
+  changeStatus,
+}) => {
   const {
     getValues,
     handleSubmit,
@@ -23,9 +29,19 @@ const MainForm: FC<MainFormProps> = ({ onSubmit, session, status }) => {
         onSubmit={handleSubmit(onSubmit)}
         className="m-auto mt-2 w-[300px] pb-4"
       >
-        <h1 className="mb-1 font-cormorant text-2xl font-bold text-black">
-          Dados pessoais
-        </h1>
+        <div className="flex justify-between">
+          <h1 className="mb-1 font-cormorant text-2xl font-bold text-black">
+            Dados pessoais
+          </h1>
+          <button
+            className="flex items-center gap-2"
+            onClick={() => changeStatus("current")}
+          >
+            <Pencil size={20} />
+            <span>Editar</span>
+          </button>
+        </div>
+
         <motion.div
           className="border-[1px] border-t-[0px] border-r-[0px] border-l-[0px] border-b-[2px] border-gray-300 pb-4"
           initial={{ opacity: 0, scale: 0.5 }}
@@ -59,7 +75,10 @@ const MainForm: FC<MainFormProps> = ({ onSubmit, session, status }) => {
     );
   }
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="m-auto mt-2 w-[300px] ">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="m-auto mt-2 mb-8 w-[300px] "
+    >
       <h1 className="mb-1 font-cormorant text-2xl font-bold text-black">
         Dados pessoais
       </h1>

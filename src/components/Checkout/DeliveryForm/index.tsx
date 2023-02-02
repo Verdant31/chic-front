@@ -7,12 +7,14 @@ import Select from "../../Select";
 import { DeliveryFormDataProps, deliveryFormValidationSchema } from "./form";
 import { DeliveryFormProps } from "./types";
 import DeliveryFormFilled from "./components/DeliveryFormFilled";
+import { Pencil } from "phosphor-react";
 
 const DeliveryForm: FC<DeliveryFormProps> = ({
   status,
   onSubmit,
   address,
   handleVerifyCep,
+  changeStatus,
 }) => {
   const {
     register,
@@ -42,11 +44,22 @@ const DeliveryForm: FC<DeliveryFormProps> = ({
         onSubmit={handleSubmit(onSubmit)}
         className="m-auto mt-2 w-[300px] pb-4"
       >
+        <div className="flex justify-between">
+          <h1 className="mb-1 font-cormorant text-2xl font-bold text-black">
+            Entrega
+          </h1>
+          <button
+            className="flex items-center gap-2"
+            onClick={() => changeStatus("cepVerified")}
+          >
+            <Pencil size={20} />
+            <span>Editar</span>
+          </button>
+        </div>
         <DeliveryFormFilled fields={fields} />
       </form>
     );
   }
-  console.log(getValues("cep"));
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.5 }}
