@@ -1,3 +1,4 @@
+import Stripe from "stripe";
 import { Address, Step } from "../../../types/checkout";
 import { DeliveryFormDataProps } from "./form";
 
@@ -7,4 +8,5 @@ export interface DeliveryFormProps {
   status: Step;
   address: Address | undefined;
   changeStatus: (status: Step) => void;
+  customer: Stripe.Customer;
 }

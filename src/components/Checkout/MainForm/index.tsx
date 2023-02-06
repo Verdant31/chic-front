@@ -1,4 +1,5 @@
-import React, { FC } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { FC, useEffect } from "react";
 import Input from "../../Input";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
@@ -12,15 +13,27 @@ const MainForm: FC<MainFormProps> = ({
   session,
   status,
   changeStatus,
+  customer,
 }) => {
   const {
     getValues,
     handleSubmit,
     register,
+    setValue,
     formState: { errors },
   } = useForm<MainFormDataProps>({
     resolver: zodResolver(mainFormValidationSchema),
   });
+
+  useEffect(() => {
+    if (customer) {
+      changeStatus("completed");
+      setValue("firstName", customer.metadata.firstName as string);
+      setValue("lastName", customer.metadata.lastName as string);
+      setValue("cpf", customer.metadata.cpf as string);
+      setValue("cellphone", customer?.phone?.split("+55")[1] as string);
+    }
+  }, [customer]);
 
   if (status === "completed") {
     const fieldsValue = getValues();
@@ -74,6 +87,7 @@ const MainForm: FC<MainFormProps> = ({
       </form>
     );
   }
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}

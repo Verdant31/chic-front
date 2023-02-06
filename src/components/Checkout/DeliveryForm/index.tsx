@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { FC, useEffect } from "react";
 import Input from "../../Input";
 import { motion } from "framer-motion";
@@ -15,6 +16,7 @@ const DeliveryForm: FC<DeliveryFormProps> = ({
   address,
   handleVerifyCep,
   changeStatus,
+  customer,
 }) => {
   const {
     register,
@@ -35,6 +37,23 @@ const DeliveryForm: FC<DeliveryFormProps> = ({
       setValue("uf", address.uf);
     }
   }, [address, setValue]);
+
+  useEffect(() => {
+    if (customer) {
+      changeStatus("completed");
+      const spllit = customer.address?.line1?.split("Numero:");
+      setValue("street", spllit?.[0]?.replace("", "") as string);
+      setValue(
+        "number",
+        spllit?.[1]?.split("Complemento:")[0]?.replace(" ", "") as string
+      );
+      setValue("complement", spllit?.[1]?.split("Complemento:")[1] as string);
+      setValue("city", customer.address?.city as string);
+      setValue("district", customer.address?.line2 as string);
+      setValue("uf", customer.address?.state as string);
+      setValue("cep", customer.address?.postal_code as string);
+    }
+  }, [customer]);
 
   if (status === "pending") return null;
   if (status === "completed") {

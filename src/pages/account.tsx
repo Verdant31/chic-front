@@ -16,7 +16,6 @@ interface AccountProps {
 const Account: React.FC<AccountProps> = ({ orders, customer }) => {
   const router = useRouter();
   const { data: session } = useSession();
-  console.log(customer);
   return (
     <div>
       <header className="flex w-[100vw] items-center border-b-[2px] px-6 pb-4">

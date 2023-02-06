@@ -1,7 +1,7 @@
 import { GetServerSideProps } from "next";
 import { getSession, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DeliveryForm from "../components/Checkout/DeliveryForm";
 import { DeliveryFormDataProps } from "../components/Checkout/DeliveryForm/form";
 import MainForm from "../components/Checkout/MainForm";
@@ -28,6 +28,13 @@ const Checkout: React.FC<CheckoutProps> = ({ customer }) => {
 
   const createCustomerMutation = api.customer.createCustomer.useMutation();
   const checkoutMutation = api.customer.checkout.useMutation();
+
+  useEffect(() => {
+    if (customer) {
+      setMainFormStatus("completed");
+      setDeliveryFormStatus("completed");
+    }
+  }, []);
 
   if (status === "loading") return <p>Carregando...</p>;
 
@@ -95,19 +102,21 @@ const Checkout: React.FC<CheckoutProps> = ({ customer }) => {
     if (response?.address) setAddress(response.address);
     if (response?.freights) setFreightOptions(response.freights);
   };
-  console.log(mainInfo);
+
   return (
     <div className="h-[100vh]">
       <h1 className="m-auto mt-2 text-center font-cormorant text-[50px] font-semibold">
         CHIC
       </h1>
       <MainForm
+        customer={customer}
         status={mainFormStatus}
         onSubmit={handleMainFormCheckout}
         session={session}
         changeStatus={handleChangeMainFormStatus}
       />
       <DeliveryForm
+        customer={customer}
         onSubmit={handleDeliveryFormCheckout}
         address={address}
         status={deliveryFormStatus}
