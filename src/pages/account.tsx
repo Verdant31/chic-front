@@ -10,11 +10,13 @@ import { format } from "date-fns";
 
 interface AccountProps {
   orders: Stripe.Response<Stripe.ApiList<Stripe.Checkout.Session>>;
+  customer: Stripe.Customer;
 }
 
-const Account: React.FC<AccountProps> = ({ orders }) => {
+const Account: React.FC<AccountProps> = ({ orders, customer }) => {
   const router = useRouter();
   const { data: session } = useSession();
+  console.log(customer);
   return (
     <div>
       <header className="flex w-[100vw] items-center border-b-[2px] px-6 pb-4">
@@ -60,7 +62,9 @@ const Account: React.FC<AccountProps> = ({ orders }) => {
                 </div>
                 <div className="p-2">
                   <p className="text-md  text-zinc-700">CPF</p>
-                  <p className="text-md font-thin  text-zinc-700"></p>
+                  <p className="text-md font-thin  text-zinc-700">
+                    {customer.metadata.cpf}
+                  </p>
                 </div>
                 <div className="p-2">
                   <p className="text-md  text-zinc-700">Data de nascimento</p>
@@ -68,7 +72,9 @@ const Account: React.FC<AccountProps> = ({ orders }) => {
                 </div>
                 <div className="p-2">
                   <p className="text-md  text-zinc-700">Telefone</p>
-                  <p className="text-md font-thin  text-zinc-700"></p>
+                  <p className="text-md font-thin  text-zinc-700">
+                    {customer.phone}
+                  </p>
                 </div>
               </div>
             </AccordionDetails>
@@ -158,6 +164,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       orders,
+      customer: customers?.data[0],
     },
   };
 };

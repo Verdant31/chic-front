@@ -8,37 +8,26 @@ import MainForm from "../components/Checkout/MainForm";
 import { MainFormDataProps } from "../components/Checkout/MainForm/form";
 import PaymentForm from "../components/Checkout/Payment";
 import { useCart } from "../context/CartContext";
-import { stripeClient } from "../utils/stripe";
-import axios from "axios";
 import { Freight } from "../types/freights";
-import { getBaseUrl } from "../utils/api";
-import { fetchCustomer } from "../hooks/fetchCustomer";
-import { useAuth } from "../context/AuthContext";
+import { api } from "../utils/api";
+import { stripeClient } from "../utils/stripe";
+import { Address, CheckoutProps, Step } from "../types/checkout";
+import { getCep } from "../utils/getCep";
 
-export type Step = "completed" | "current" | "pending" | "cepVerified";
-export type Address = {
-  district: string;
-  city: string;
-  cep: string;
-  uf: string;
-  street: string;
-  number: string;
-  complement: string;
-};
+const Checkout: React.FC<CheckoutProps> = ({ customer }) => {
+  const { data: session, status } = useSession();
+  const { products } = useCart();
+  const router = useRouter();
 
-const Checkout: React.FC = () => {
   const [mainFormStatus, setMainFormStatus] = useState<Step>("current");
   const [deliveryFormStatus, setDeliveryFormStatus] = useState<Step>("pending");
   const [paymentFormStatus, setPaymentFormStatus] = useState<Step>("pending");
   const [freightOptions, setFreightOptions] = useState<Freight[]>([]);
-
   const [address, setAddress] = useState<Address | undefined>();
   const [mainInfo, setMainInfo] = useState<MainFormDataProps | undefined>();
-  const router = useRouter();
 
-  const { products } = useCart();
-  const { user } = useAuth();
-  const { data: session, status } = useSession();
+  const createCustomerMutation = api.customer.createCustomer.useMutation();
+  const checkoutMutation = api.customer.checkout.useMutation();
 
   if (status === "loading") return <p>Carregando...</p>;
 
@@ -68,75 +57,45 @@ const Checkout: React.FC = () => {
 
   const handlePaymentFormCheckout = async () => {
     setPaymentFormStatus("completed");
-    if (!user) return;
-    await fetchCustomer({ email: user.user.email, address, mainInfo }).then(
-      async (customer) => {
-        await stripeClient.checkout.sessions
-          .create({
-            payment_method_types: ["card"],
-            mode: "payment",
-            customer_update: {
-              name: "auto",
-            },
-            customer: customer?.id,
-            shipping_options: freightOptions.map((freight) => ({
-              shipping_rate_data: {
-                type: "fixed_amount",
-                display_name: freight.serviceName,
-                fixed_amount: {
-                  currency: "brl",
-                  amount: Math.round(
-                    Number(freight.price.replace(",", ".")) * 100
-                  ),
-                },
-                delivery_estimate: {
-                  maximum: { unit: "day", value: Number(freight.deadline) },
-                },
-              },
-            })),
-            line_items: products.map((product) => ({
-              price_data: {
-                currency: "brl",
-                unit_amount: Number(product.price) * 100,
-                product_data: {
-                  name: product.name,
-                  images: product.images,
-                },
-              },
-              quantity: product.quantity,
-            })),
-            success_url: `${getBaseUrl()}/success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${getBaseUrl()}/home`,
-          })
-          .then((res) => {
-            if (res && res.url) router.push(res.url);
-          });
-      }
-    );
+    if (!session?.user?.email || !address || !mainInfo) return;
+    if (!customer) {
+      await createCustomerMutation
+        .mutateAsync({
+          email: session?.user?.email,
+          address,
+          mainInfo,
+        })
+        .then(async (customer) => {
+          await checkoutMutation
+            .mutateAsync({
+              customerId: customer.id,
+              products,
+              freightOptions,
+            })
+            .then((res) => {
+              if (res && res.url) router.push(res.url);
+            });
+        });
+    } else {
+      await checkoutMutation
+        .mutateAsync({
+          customerId: customer.id,
+          products,
+          freightOptions,
+        })
+        .then((res) => {
+          if (res && res.url) router.push(res.url);
+        });
+    }
   };
 
   const handleVerifyCep = async (cep: string) => {
     setDeliveryFormStatus("cepVerified");
-    const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`).then(
-      (res) => res.json()
-    );
-    if (response)
-      setAddress({
-        cep,
-        city: response.localidade,
-        district: response.bairro,
-        uf: response.uf,
-        street: response.logradouro,
-        number: "",
-        complement: "",
-      });
-    await axios
-      .post("api/calculateDeliveryFee", {
-        cep,
-      })
-      .then((res) => setFreightOptions(res.data.freights));
+    const response = await getCep(cep);
+    if (response?.address) setAddress(response.address);
+    if (response?.freights) setFreightOptions(response.freights);
   };
-
+  console.log(mainInfo);
   return (
     <div className="h-[100vh]">
       <h1 className="m-auto mt-2 text-center font-cormorant text-[50px] font-semibold">
@@ -167,7 +126,7 @@ export default Checkout;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
-  if (!session) {
+  if (!session || !session?.user?.email) {
     return {
       redirect: {
         destination: "/",
@@ -175,7 +134,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   }
+  const prevCustomer = await stripeClient.customers.list({
+    email: session?.user?.email,
+    limit: 1,
+  });
+
   return {
-    props: { session },
+    props: {
+      session,
+      customer: prevCustomer.data[0] ? prevCustomer.data[0] : null,
+    },
   };
 };

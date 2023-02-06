@@ -102,14 +102,7 @@ const MainForm: FC<MainFormProps> = ({
           id="lastName"
           label="Ultimo nome"
         />
-        <Input
-          placeholder="123456789"
-          errors={errors}
-          register={register}
-          name="rg"
-          id="rg"
-          label="RG"
-        />
+
         <Input
           placeholder="123.456.789-01"
           errors={errors}

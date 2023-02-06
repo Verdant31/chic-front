@@ -1,9 +1,9 @@
 import { MainFormDataProps } from "../components/Checkout/MainForm/form";
-import { Address } from "../pages/checkout";
+import { Address } from "../types/checkout";
 import { stripeClient } from "../utils/stripe";
 
 interface fetchCustomerProps {
-  email: string;
+  email: string | undefined | null;
   address: Address | undefined;
   mainInfo: MainFormDataProps | undefined;
 }
@@ -12,6 +12,7 @@ export const fetchCustomer = async ({
   address,
   mainInfo,
 }: fetchCustomerProps) => {
+  if (!email) return;
   const prevCustomer = await stripeClient.customers.list({
     email,
     limit: 1,

@@ -1,4 +1,4 @@
-import { Address, Step } from "../../../pages/checkout";
+import { Address, Step } from "../../../types/checkout";
 import { DeliveryFormDataProps } from "./form";
 
 export interface DeliveryFormProps {

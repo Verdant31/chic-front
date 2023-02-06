@@ -1,5 +1,5 @@
 import { Session } from "next-auth";
-import { Step } from "../../../pages/checkout";
+import { Step } from "../../../types/checkout";
 import { MainFormDataProps } from "./form";
 
 export interface MainFormProps {
