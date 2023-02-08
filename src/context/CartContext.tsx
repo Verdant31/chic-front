@@ -6,7 +6,7 @@ import React, {
   useState,
 } from "react";
 import nookies from "nookies";
-import { Product } from "../types/product";
+import { Product } from "@prisma/client";
 
 interface CartContextProviderProps {
   children: ReactNode;

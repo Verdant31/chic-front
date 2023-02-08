@@ -7,11 +7,11 @@ import { Pagination } from "swiper";
 import { Minus, Plus } from "phosphor-react";
 import { useCart } from "../../context/CartContext";
 import { GetServerSideProps } from "next";
-import { stripeClient } from "../../utils/stripe";
-import { Product as TProduct } from "../../types/product";
+import { Product as PrismaProduct } from "@prisma/client";
+import { prisma } from "../../server/db";
 
 interface ProductProps {
-  product: TProduct;
+  product: PrismaProduct;
 }
 
 const Product: FC<ProductProps> = ({ product }) => {
@@ -88,25 +88,15 @@ export default Product;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const productId = context.params?.productId as string;
-  const product = await stripeClient.products.retrieve(productId);
-  const price = await stripeClient.prices.retrieve(
-    product.default_price as string
-  );
-
-  const formattedProduct = {
-    id: product.id,
-    name: product.name,
-    description: product.description,
-    price:
-      price && price.unit_amount ? (price?.unit_amount / 100).toFixed(2) : 0,
-    images: JSON.parse(product.metadata.imagens as string),
-    category: product.metadata.categoria,
-    stock: product.metadata.estoque,
-  };
+  const product = await prisma.product.findUnique({
+    where: {
+      id: productId,
+    },
+  });
 
   return {
     props: {
-      product: formattedProduct,
+      product,
     },
   };
 };

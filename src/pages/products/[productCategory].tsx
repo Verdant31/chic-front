@@ -1,12 +1,12 @@
 /* eslint-disable no-async-promise-executor */
+import { Product } from "@prisma/client";
 import { GetServerSideProps } from "next";
 import { Sliders } from "phosphor-react";
 import React, { FC, useState } from "react";
 import Filter from "../../components/Products/Filter";
 import useFilter from "../../components/Products/Filter/hook";
 import ProductCard from "../../components/Products/ProductCard";
-import { Product } from "../../types/product";
-import { stripeClient } from "../../utils/stripe";
+import { prisma } from "../../server/db";
 
 interface CatalogProps {
   products: Product[];
@@ -54,26 +54,12 @@ const Catalog: FC<CatalogProps> = ({ products }) => {
 export default Catalog;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { data: products } = await stripeClient.products.search({
-    query: `metadata['categoria']:'${context.params?.productCategory}'`,
+  const category = context.params?.productCategory as string;
+  const products = await prisma.product.findMany({
+    where: { category },
   });
-  const { data: prices } = await stripeClient.prices.list();
-  const formattedProducts = products.map((product) => {
-    const price = prices.find((price) => price.product === product.id);
-    if (!price?.unit_amount) return null;
-    return {
-      id: product.id,
-      name: product.name,
-      description: product.description,
-      price: (price?.unit_amount / 100).toFixed(2),
-      images: JSON.parse(product.metadata.imagens as string),
-      category: product.metadata.categoria,
-      stock: product.metadata.estoque,
-    };
-  });
+
   return {
-    props: {
-      products: formattedProducts,
-    },
+    props: { products },
   };
 };
