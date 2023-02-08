@@ -1,132 +1,81 @@
 import { GetServerSideProps } from "next";
-import { getSession, useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import DeliveryForm from "../components/Checkout/DeliveryForm";
-import { DeliveryFormDataProps } from "../components/Checkout/DeliveryForm/form";
-import MainForm from "../components/Checkout/MainForm";
-import { MainFormDataProps } from "../components/Checkout/MainForm/form";
+import { getSession } from "next-auth/react";
+import { Minus, Plus, Trash } from "phosphor-react";
+import React from "react";
+import { useCartComponent } from "../components/Cart/hook";
 import PaymentForm from "../components/Checkout/Payment";
-import { useCart } from "../context/CartContext";
-import { Freight } from "../types/freights";
-import { api } from "../utils/api";
-import { stripeClient } from "../utils/stripe";
-import { Address, CheckoutProps, Step } from "../types/checkout";
-import { getCep } from "../utils/getCep";
+import { CheckoutProps } from "../types/checkout";
 
-const Checkout: React.FC<CheckoutProps> = ({ customer }) => {
-  const { data: session, status } = useSession();
-  const { products } = useCart();
-  const router = useRouter();
-
-  const [mainFormStatus, setMainFormStatus] = useState<Step>("current");
-  const [deliveryFormStatus, setDeliveryFormStatus] = useState<Step>("pending");
-  const [paymentFormStatus, setPaymentFormStatus] = useState<Step>("pending");
-  const [freightOptions, setFreightOptions] = useState<Freight[]>([]);
-  const [address, setAddress] = useState<Address | undefined>();
-  const [mainInfo, setMainInfo] = useState<MainFormDataProps | undefined>();
-
-  const createCustomerMutation = api.customer.createCustomer.useMutation();
-  const checkoutMutation = api.customer.checkout.useMutation();
-
-  useEffect(() => {
-    if (customer) {
-      setMainFormStatus("completed");
-      setDeliveryFormStatus("completed");
-    }
-  }, []);
-
-  if (status === "loading") return <p>Carregando...</p>;
-
-  const handleChangeMainFormStatus = (newStatus: Step) => {
-    setMainFormStatus(newStatus);
-    document.body.scrollTop = document.documentElement.scrollTop = 0;
-  };
-
-  const handleChangeDeliveryFormStatus = (newStatus: Step) => {
-    setDeliveryFormStatus(newStatus);
-    document.body.scrollTop = document.documentElement.scrollTop = 0;
-  };
-
-  const handleMainFormCheckout = (e: MainFormDataProps) => {
-    setMainInfo(e);
-    setMainFormStatus("completed");
-    setDeliveryFormStatus("current");
-    document.body.scrollTop = document.documentElement.scrollTop = 0;
-  };
-
-  const handleDeliveryFormCheckout = async (e: DeliveryFormDataProps) => {
-    setAddress(e);
-    setDeliveryFormStatus("completed");
-    setPaymentFormStatus("current");
-    document.body.scrollTop = document.documentElement.scrollTop = 0;
-  };
-
-  const handlePaymentFormCheckout = async () => {
-    setPaymentFormStatus("completed");
-    if (!session?.user?.email || !address || !mainInfo) return;
-    if (!customer) {
-      await createCustomerMutation
-        .mutateAsync({
-          email: session?.user?.email,
-          address,
-          mainInfo,
-        })
-        .then(async (customer) => {
-          await checkoutMutation
-            .mutateAsync({
-              customerId: customer.id,
-              products,
-              freightOptions,
-            })
-            .then((res) => {
-              if (res && res.url) router.push(res.url);
-            });
-        });
-    } else {
-      await checkoutMutation
-        .mutateAsync({
-          customerId: customer.id,
-          products,
-          freightOptions,
-        })
-        .then((res) => {
-          if (res && res.url) router.push(res.url);
-        });
-    }
-  };
-
-  const handleVerifyCep = async (cep: string) => {
-    setDeliveryFormStatus("cepVerified");
-    const response = await getCep(cep);
-    if (response?.address) setAddress(response.address);
-    if (response?.freights) setFreightOptions(response.freights);
-  };
-
+const Checkout: React.FC<CheckoutProps> = () => {
+  const {
+    handleProductDecrease,
+    handleProductIncrease,
+    products,
+    removeProductFromCart,
+    subtotal,
+  } = useCartComponent();
   return (
     <div className="h-[100vh]">
       <h1 className="m-auto mt-2 text-center font-cormorant text-[50px] font-semibold">
         CHIC
       </h1>
-      <MainForm
-        customer={customer}
-        status={mainFormStatus}
-        onSubmit={handleMainFormCheckout}
-        session={session}
-        changeStatus={handleChangeMainFormStatus}
-      />
-      <DeliveryForm
-        customer={customer}
-        onSubmit={handleDeliveryFormCheckout}
-        address={address}
-        status={deliveryFormStatus}
-        handleVerifyCep={handleVerifyCep}
-        changeStatus={handleChangeDeliveryFormStatus}
-      />
-      <PaymentForm
-        onSubmit={handlePaymentFormCheckout}
-        status={paymentFormStatus}
-      />
+      <p className="mt-8 text-center font-ptserif text-2xl uppercase">
+        Resumo do carrinho
+      </p>
+      <div className="mt-8 flex flex-col items-center">
+        {products.map((product) => (
+          <div key={product.id} className="mb-12 flex items-center gap-10">
+            <img
+              className="h-12 w-12"
+              src={product.images[0]}
+              alt="Foto do produto"
+            />
+            <div className="flex flex-col">
+              <div className="flex items-center gap-4">
+                <h1>{product.name}</h1>
+                <Trash
+                  onClick={() => removeProductFromCart(product.id)}
+                  size={20}
+                  color="#dfbd69"
+                  weight="bold"
+                />
+              </div>
+              <p className="mb-2">R${product.price}</p>
+              <div className="relative w-24">
+                <Minus
+                  weight="bold"
+                  color="#dfbd69"
+                  onClick={() => handleProductDecrease(product)}
+                  size={16}
+                  className="absolute left-3 top-[50%] z-50 translate-y-[-50%]"
+                />
+                <input
+                  min={1}
+                  readOnly
+                  value={product.quantity}
+                  className="h-7 w-[100%] overflow-hidden rounded-full border-[1px]  border-[#dfbd69] text-center font-sans text-black outline-none focus:border-[2px] "
+                />
+                <Plus
+                  weight="bold"
+                  color="#dfbd69"
+                  onClick={() => handleProductIncrease(product)}
+                  size={16}
+                  className="absolute right-3 top-[50%] translate-y-[-50%] focus:bg-red-500 "
+                />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <p className="text-md mr-9 mb-4 text-right font-semibold uppercase tracking-wider">
+        Subtotal: R${subtotal.toFixed(2)}
+      </p>
+      <div className="m-auto w-[80%]">
+        <PaymentForm products={products} />
+        <p className="mt-4 text-center font-thin italic text-zinc-400">
+          Pague parcelado com cartão de crédito ou PIX através do Paypal.
+        </p>
+      </div>
     </div>
   );
 };
@@ -143,15 +92,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   }
-  const prevCustomer = await stripeClient.customers.list({
-    email: session?.user?.email,
-    limit: 1,
-  });
-
   return {
     props: {
       session,
-      customer: prevCustomer.data[0] ? prevCustomer.data[0] : null,
     },
   };
 };

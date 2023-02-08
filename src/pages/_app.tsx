@@ -9,6 +9,7 @@ import { AuthContextProvider } from "../context/AuthContext";
 import { CartContextProvider } from "../context/CartContext";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -26,7 +27,15 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <CartContextProvider>
           <ToastContainer autoClose={1000} />
           {hasHader ? null : <Header />}
-          <Component {...pageProps} />
+          <PayPalScriptProvider
+            options={{
+              currency: "BRL",
+              "client-id":
+                "AbXTdbuvfXaSAQYJp8ZDariWTXxiY8rN79sQE7Hc6I3etWK3Hu8gKoG-ExVQafesUm137c_XRvPvP4R8",
+            }}
+          >
+            <Component {...pageProps} />
+          </PayPalScriptProvider>
         </CartContextProvider>
       </AuthContextProvider>
     </SessionProvider>

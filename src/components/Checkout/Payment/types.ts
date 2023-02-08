@@ -1,5 +1,5 @@
-import { Step } from "../../../pages/checkout";
+import { CartProduct } from "../../../context/CartContext";
+
 export interface PaymentFormProps {
-  onSubmit: () => void;
-  status: Step;
+  products: CartProduct[];
 }
